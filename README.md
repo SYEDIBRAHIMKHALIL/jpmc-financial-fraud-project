@@ -5,8 +5,6 @@ The dataset is a subset of https://www.kaggle.com/ealaxi/paysim1/version/2 which
 
 E. A. Lopez-Rojas , A. Elmir, and S. Axelsson. "PaySim: A financial mobile money simulator for fraud detection". In: The 28th European Modeling and Simulation Symposium-EMSS, Larnaca, Cyprus. 2016
 
-Certainly! Below is the README file formatted in Markdown. This version includes code blocks, sections for screenshots, and placeholders where you can add your own images and contact details.
-
 ```markdown
 # JPMorgan Chase Financial Fraud Detection
 
