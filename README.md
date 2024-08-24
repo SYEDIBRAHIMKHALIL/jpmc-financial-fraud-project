@@ -19,7 +19,7 @@ To get started with this project, you'll need to set up your Python environment 
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/jpmc-financial-fraud-project.git
+git clone https://github.com/syedibrahimkhalil/jpmc-financial-fraud-project.git
 cd jpmc-financial-fraud-project
 ```
 
