@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 def exercise_0(file):
     df = pd.read_csv(file)
     print(df.head())
+    print("Columns:", df.columns)  # Debug print to show column names
     return df
 
 def exercise_1(df):
@@ -72,19 +73,23 @@ def visual_1(df):
         return df['type'].value_counts()
 
     def transaction_counts_split_by_fraud(df):
-        return df.groupby(['type', 'isFraud']).size().unstack().fillna(0)
+        if 'type' not in df.columns or 'isFraud' not in df.columns:
+            raise ValueError("Required columns are missing.")
+        counts = df.groupby(['type', 'isFraud']).size().unstack().fillna(0)
+        counts.columns = ['Non-Fraud', 'Fraud']
+        return counts
 
-    fig, axs = plt.subplots(2, figsize=(10, 10))
+    fig, axs = plt.subplots(2, figsize=(12, 10))
     
     # Plot the first bar chart: Transaction Types
-    transaction_counts(df).plot(ax=axs[0], kind='bar')
+    transaction_counts(df).plot(ax=axs[0], kind='bar', color='skyblue')
     axs[0].set_title('Transaction Types Bar Chart')
     axs[0].set_xlabel('Transaction Type')
     axs[0].set_ylabel('Frequency')
     
     # Plot the second bar chart: Transaction Types Split by Fraud
     transaction_split = transaction_counts_split_by_fraud(df)
-    transaction_split.plot(ax=axs[1], kind='bar', stacked=True, color=['blue', 'orange'])
+    transaction_split.plot(ax=axs[1], kind='bar', stacked=True, color=['skyblue', 'orange'])
     axs[1].set_title('Transaction Types Split by Fraud Bar Chart')
     axs[1].set_xlabel('Transaction Type')
     axs[1].set_ylabel('Frequency')
@@ -94,40 +99,54 @@ def visual_1(df):
     
     for ax in axs:
         for p in ax.patches:
-            ax.annotate(p.get_height(), (p.get_x() + p.get_width() / 2, p.get_height()), ha='center', va='bottom')
-    
+            height = p.get_height()
+            ax.annotate(f'{height:.0f}', (p.get_x() + p.get_width() / 2, height),
+                        ha='center', va='bottom')
+
     return ('The first chart displays the frequency of each transaction type. '
             'The second chart shows the breakdown of transaction types by fraud status, '
-            'with colors indicating non-fraud (blue) and fraud (orange) occurrences.')
+            'with colors indicating non-fraud (skyblue) and fraud (orange) occurrences.')
 
 def visual_2(df):
     def query(df):
-        return df[df['type'] == 'CASH_OUT'][['oldbalanceOrg', 'newbalanceDest']]
+        if 'type' not in df.columns or 'oldbalanceOrg' not in df.columns or 'newbalanceDest' not in df.columns:
+            raise ValueError("Required columns are missing.")
+        cash_out_transactions = df[df['type'] == 'CASH_OUT']
+        if cash_out_transactions.empty:
+            raise ValueError("No CASH_OUT transactions found.")
+        return cash_out_transactions[['oldbalanceOrg', 'newbalanceDest', 'isFraud']]
     
-    df_cash_out = query(df)
-    df_cash_out.plot.scatter(x='oldbalanceOrg', y='newbalanceDest')
-    plt.title('Origin vs. Destination Account Balance Delta for Cash Out Transactions')
-    plt.xlabel('Origin Account Balance Delta')
-    plt.ylabel('Destination Account Balance Delta')
-    plt.xlim(left=-1e3, right=1e3)
-    plt.ylim(bottom=-1e3, top=1e3)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    scatter_data = query(df)
+    
+    # Plotting with different colors for fraud and non-fraud transactions
+    scatter_data[scatter_data['isFraud'] == 0].plot.scatter(x='oldbalanceOrg', y='newbalanceDest', ax=ax, color='blue', alpha=0.5, label='Non-Fraud', s=10)
+    scatter_data[scatter_data['isFraud'] == 1].plot.scatter(x='oldbalanceOrg', y='newbalanceDest', ax=ax, color='red', alpha=0.7, label='Fraud', s=50)
+    
+    ax.set_title('Origin vs. Destination Account Balance Delta for Cash Out Transactions')
+    ax.set_xlabel('Origin Account Balance Delta')
+    ax.set_ylabel('Destination Account Balance Delta')
+    ax.set_xlim(left=-1e4, right=1e4)
+    ax.set_ylim(bottom=-1e4, top=1e4)
+    ax.legend()
     
     return ('The scatter plot visualizes the relationship between the origin and destination account balance '
-            'delta for cash out transactions. This can help identify any patterns or anomalies in cash out transactions.')
+            'delta for cash out transactions, with distinct colors for fraud (red) and non-fraud (blue) transactions. '
+            'This helps in identifying patterns or anomalies.')
 
 def exercise_custom(df):
-    # Example Custom Analysis: Distribution of transaction amounts
     return df['amount'].describe()
 
 def visual_custom(df):
     def query(df):
         return df[['amount']]
 
+    fig, ax = plt.subplots(figsize=(12, 8))
     df_amounts = query(df)
-    df_amounts.plot.hist(bins=50, edgecolor='black')
-    plt.title('Distribution of Transaction Amounts')
-    plt.xlabel('Transaction Amount')
-    plt.ylabel('Frequency')
+    df_amounts.plot.hist(bins=50, edgecolor='black', ax=ax, color='teal')
+    ax.set_title('Distribution of Transaction Amounts')
+    ax.set_xlabel('Transaction Amount')
+    ax.set_ylabel('Frequency')
 
     return ('The histogram displays the distribution of transaction amounts. '
             'This visualization helps understand the spread and common ranges of transaction amounts in the dataset.')
