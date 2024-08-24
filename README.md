@@ -1,18 +1,16 @@
-# jpmc-financial-fraud-project
+### JPMorgan Chase Financial Fraud Detection
+
+## Overview
 Analysis of large datasets for detecting fraud in financial payment services as part of JPMorgan &amp; Chase job simulation experience.
 
 The dataset is a subset of https://www.kaggle.com/ealaxi/paysim1/version/2 which was originally generated as part of the following research:
 
 E. A. Lopez-Rojas , A. Elmir, and S. Axelsson. "PaySim: A financial mobile money simulator for fraud detection". In: The 28th European Modeling and Simulation Symposium-EMSS, Larnaca, Cyprus. 2016
 
-```markdown
-# JPMorgan Chase Financial Fraud Detection
-
-## Overview
 
 This project involves analyzing financial transaction data to detect potential fraud. The dataset contains various types of transactions, and the goal is to extract insights and create visualizations to understand the nature of these transactions better.
 
-## Installation
+### Installation
 
 To get started with this project, you'll need to set up your Python environment and install the required libraries. Below are the installation instructions:
 
